@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/votes?useSSL=false&serverTimezone=UTC
     username: root
-    password: slimjay91
+    password: abeeb
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -11,5 +11,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    database: postgresql
+    database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
