@@ -11,5 +11,5 @@ spring:
     properties:
       hibernate:
         format_sql: true
-    database: postgresql
+    database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
