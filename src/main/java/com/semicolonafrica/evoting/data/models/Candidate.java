@@ -12,9 +12,10 @@ import lombok.Data;
 public class Candidate{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String fullName;
     private String email;
+    private String token;
     private Long noOfVotes;
 }
