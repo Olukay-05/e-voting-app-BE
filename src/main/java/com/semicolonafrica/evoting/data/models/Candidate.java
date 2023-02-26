@@ -9,9 +9,12 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Candidate extends Voter{
+public class Candidate{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String fullName;
+    private String email;
+    private Long noOfVotes;
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Entity
 @Data
+
 public class Voter {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
