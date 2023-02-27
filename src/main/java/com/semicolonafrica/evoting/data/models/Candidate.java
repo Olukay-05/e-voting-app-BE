@@ -1,21 +1,18 @@
 package com.semicolonafrica.evoting.data.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 
 @Entity
 @Data
-public class Candidate{
+public class Candidate extends Voter{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    private String fullName;
-    private String email;
-    private String token;
-    private Long noOfVotes;
+    private long noOfVotes;
+    @ManyToOne
+//    @JoinColumn(name="admin_id")
+    private Admin admin;
 }
