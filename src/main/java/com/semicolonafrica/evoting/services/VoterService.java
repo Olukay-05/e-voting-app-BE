@@ -1,10 +1,8 @@
 package com.semicolonafrica.evoting.services;
 
-import com.semicolonafrica.evoting.data.models.Candidate;
-import com.semicolonafrica.evoting.data.models.Voter;
+import com.semicolonafrica.evoting.dto.request.VoteRequest;
+import com.semicolonafrica.evoting.dto.response.VoteResponse;
 
 public interface VoterService {
-    void addVoter(Voter voter);
-    boolean voterExists(String email);
-
+    VoteResponse vote(VoteRequest voteRequest);
 }

@@ -1,4 +1,7 @@
 package com.semicolonafrica.evoting.data.repository;
 
-public interface AdminRepo {
+import com.semicolonafrica.evoting.data.models.Admin;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AdminRepo extends JpaRepository<Admin, Long> {
 }

@@ -1,11 +1,15 @@
 package com.semicolonafrica.evoting.services;
 
+import com.semicolonafrica.evoting.data.models.Admin;
 import com.semicolonafrica.evoting.data.models.Candidate;
-import com.semicolonafrica.evoting.data.models.Voter;
+import com.semicolonafrica.evoting.data.models.NonCandidate;
+import com.semicolonafrica.evoting.data.repository.AdminRepo;
 import com.semicolonafrica.evoting.dto.request.AddCandidateRequest;
-import com.semicolonafrica.evoting.dto.request.AddVoterRequest;
+import com.semicolonafrica.evoting.dto.request.AddNonCandidateRequest;
+import com.semicolonafrica.evoting.dto.request.ResultRequest;
 import com.semicolonafrica.evoting.dto.response.AddCandidateResponse;
-import com.semicolonafrica.evoting.dto.response.AddVoterResponse;
+import com.semicolonafrica.evoting.dto.response.AddNonCandidateResponse;
+import com.semicolonafrica.evoting.dto.response.ResultResponse;
 import com.semicolonafrica.evoting.email.EmailSenderService;
 import com.semicolonafrica.evoting.exceptions.UserExistsException;
 import jakarta.mail.MessagingException;
@@ -14,16 +18,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.List;
 
 @Service
 public class AdminServiceImpl implements AdminService{
     @Autowired
     private CandidateService candidateService;
     @Autowired
-    private VoterService voterService;
+    private NonCandidateService nonCandidateService;
     @Autowired
     private EmailSenderService emailSenderService;
 
+    @Autowired
+    private AdminRepo adminRepo;
+    private final Admin admin = new Admin();
     @Override
     public AddCandidateResponse addCandidate(AddCandidateRequest addCandidateRequest) throws MessagingException {
         validateCandidate(addCandidateRequest);
@@ -33,22 +41,40 @@ public class AdminServiceImpl implements AdminService{
         candidate.setToken(token);
         candidate.setEmail(addCandidateRequest.getEmail());
         candidateService.addCandidate(candidate);
+
+        admin.getCandidateList().add(candidate);
+        adminRepo.save(admin);
+
         emailSenderService.send(addCandidateRequest.getEmail(), buildEmail(addCandidateRequest.getEmail(), token));
         AddCandidateResponse response = getAddCandidateResponse();
         return response;
     }
 
     @Override
-    public AddVoterResponse addVoter(AddVoterRequest addVoterRequest) throws MessagingException {
-        validateVoter(addVoterRequest);
-        Voter voter = new Voter();
-        voter.setFullName(addVoterRequest.getFullName());
+    public AddNonCandidateResponse addNonCandidate(AddNonCandidateRequest addNonCandidateRequest) throws MessagingException {
+        validateNonCandidate(addNonCandidateRequest);
+        NonCandidate nonCandidate = new NonCandidate();
+        nonCandidate.setFullName(addNonCandidateRequest.getFullName());
         String token = generateToken();
-        voter.setToken(token);
-        voter.setEmail(addVoterRequest.getEmail());
-        voterService.addVoter(voter);
-        emailSenderService.send(addVoterRequest.getEmail(), buildEmail(addVoterRequest.getEmail(), token));
-        AddVoterResponse response = getAddVoterResponse();
+        nonCandidate.setToken(token);
+        nonCandidate.setEmail(addNonCandidateRequest.getEmail());
+        nonCandidateService.addNonCandidate(nonCandidate);
+        admin.getNonCandidateList().add(nonCandidate);
+        adminRepo.save(admin);
+
+        emailSenderService.send(addNonCandidateRequest.getEmail(), buildEmail(addNonCandidateRequest.getEmail(), token));
+        AddNonCandidateResponse response = getAddNonCandidateResponse();
+        return response;
+    }
+
+    @Override
+    public ResultResponse displayResult(ResultRequest request) {
+        List<Candidate> candidates = request.getCandidateList();
+        ResultResponse response = new ResultResponse();
+        candidates.
+                forEach(candidate -> response.setMessage("Candidate " + candidate.getFullName()
+                        + " has " + candidate.getNoOfVotes() + " votes."));
+        response.setStatus(HttpStatus.OK);
         return response;
     }
 
@@ -58,11 +84,11 @@ public class AdminServiceImpl implements AdminService{
         addCandidateResponse.setMessage("Candidate added successfully");
         return addCandidateResponse;
     }
-    private AddVoterResponse getAddVoterResponse() {
-        AddVoterResponse addVoterResponse = new AddVoterResponse();
-        addVoterResponse.setStatus(HttpStatus.CREATED);
-        addVoterResponse.setMessage("Voter added successfully");
-        return addVoterResponse;
+    private AddNonCandidateResponse getAddNonCandidateResponse() {
+        AddNonCandidateResponse addNonCandidateResponse = new AddNonCandidateResponse();
+        addNonCandidateResponse.setStatus(HttpStatus.CREATED);
+        addNonCandidateResponse.setMessage("NonCandidate added successfully");
+        return addNonCandidateResponse;
     }
 
     private void validateCandidate(AddCandidateRequest addCandidateRequest) {
@@ -70,9 +96,9 @@ public class AdminServiceImpl implements AdminService{
             throw new UserExistsException("Candidate exists");
     }
 
-    private void validateVoter(AddVoterRequest addVoterRequest) {
-        if (voterService.voterExists(addVoterRequest.getEmail()))
-            throw new UserExistsException("Voter exists");
+    private void validateNonCandidate(AddNonCandidateRequest addNonCandidateRequest) {
+        if (nonCandidateService.voterExists(addNonCandidateRequest.getEmail()))
+            throw new UserExistsException("NonCandidate exists");
     }
 
 
