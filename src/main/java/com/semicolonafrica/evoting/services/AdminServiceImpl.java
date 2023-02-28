@@ -31,7 +31,7 @@ public class AdminServiceImpl implements AdminService{
 
     @Autowired
     private AdminRepo adminRepo;
-    private final Admin admin = new Admin();
+    private Admin admin = new Admin();
     @Override
     public AddCandidateResponse addCandidate(AddCandidateRequest addCandidateRequest) throws MessagingException {
         validateCandidate(addCandidateRequest);
@@ -68,13 +68,15 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public ResultResponse displayResult(ResultRequest request) {
-        List<Candidate> candidates = request.getCandidateList();
-        ResultResponse response = new ResultResponse();
-        candidates.
-                forEach(candidate -> response.setMessage("Candidate " + candidate.getFullName()
-                        + " has " + candidate.getNoOfVotes() + " votes."));
+    public ResultResponse displayResult() {
+        List<Candidate> candidates = admin.getCandidateList();
+                ResultResponse response = new ResultResponse();
+        for (Candidate candidate : candidates){
+            System.out.println("Candidate " + candidate.getFullName()
+                       + " has " + candidate.getNoOfVotes() + " votes.");
+        }
         response.setStatus(HttpStatus.OK);
+
         return response;
     }
 

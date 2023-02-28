@@ -48,11 +48,11 @@ public class AdminController {
     }
 
     @GetMapping("display-result")
-    public ResponseEntity<ApiResponse> result(@RequestBody ResultRequest resultRequest,
+    public ResponseEntity<ApiResponse> result(
                                               HttpServletRequest httpServletRequest){
         ApiResponse apiResponse= ApiResponse.builder()
                 .statusCode(HttpStatus.OK)
-                .data(adminService.displayResult(resultRequest))
+                .data(adminService.displayResult())
                 .timeStamp(ZonedDateTime.now())
                 .path(httpServletRequest.getRequestURI())
                 .isSuccessful(true)

@@ -60,6 +60,4 @@ public class NonCandidateServiceImpl implements NonCandidateService{
         nonCandidate.setToken(hashToken);
         addNonCandidate(nonCandidate);
     }
-
-
 }
