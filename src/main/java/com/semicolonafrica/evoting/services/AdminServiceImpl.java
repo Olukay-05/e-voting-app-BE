@@ -6,13 +6,16 @@ import com.semicolonafrica.evoting.data.models.NonCandidate;
 import com.semicolonafrica.evoting.data.repository.AdminRepo;
 import com.semicolonafrica.evoting.dto.request.AddCandidateRequest;
 import com.semicolonafrica.evoting.dto.request.AddNonCandidateRequest;
+import com.semicolonafrica.evoting.dto.request.AdminLoginRequest;
 import com.semicolonafrica.evoting.dto.request.ResultRequest;
 import com.semicolonafrica.evoting.dto.response.AddCandidateResponse;
 import com.semicolonafrica.evoting.dto.response.AddNonCandidateResponse;
+import com.semicolonafrica.evoting.dto.response.AdminLoginResponse;
 import com.semicolonafrica.evoting.dto.response.ResultResponse;
 import com.semicolonafrica.evoting.email.EmailSenderService;
 import com.semicolonafrica.evoting.exceptions.UserExistsException;
 import jakarta.mail.MessagingException;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -31,7 +34,18 @@ public class AdminServiceImpl implements AdminService{
 
     @Autowired
     private AdminRepo adminRepo;
-    private Admin admin = new Admin();
+    private final Admin admin = new Admin();
+
+    @Override
+    public AdminLoginResponse adminLogin(AdminLoginRequest adminLoginRequest) {
+        Admin foundAdmin = adminRepo.findByName(adminLoginRequest.getName());
+        AdminLoginResponse response = new AdminLoginResponse();
+        if (adminLoginRequest.getPassword().equals(foundAdmin.getPassword())){
+            response.setStatus(HttpStatus.OK);
+            response.setMessage("Login successful");
+        }else throw new IllegalStateException("Invalid password");
+        return response;
+    }
     @Override
     public AddCandidateResponse addCandidate(AddCandidateRequest addCandidateRequest) throws MessagingException {
         validateCandidate(addCandidateRequest);
@@ -68,16 +82,8 @@ public class AdminServiceImpl implements AdminService{
     }
 
     @Override
-    public ResultResponse displayResult() {
-        List<Candidate> candidates = admin.getCandidateList();
-                ResultResponse response = new ResultResponse();
-        for (Candidate candidate : candidates){
-            System.out.println("Candidate " + candidate.getFullName()
-                       + " has " + candidate.getNoOfVotes() + " votes.");
-        }
-        response.setStatus(HttpStatus.OK);
-
-        return response;
+    public List<Candidate> displayResult() {
+        return candidateService.findAllCandidates();
     }
 
     private AddCandidateResponse getAddCandidateResponse() {
