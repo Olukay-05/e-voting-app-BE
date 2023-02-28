@@ -17,7 +17,5 @@ public interface AdminService {
     AdminLoginResponse adminLogin(AdminLoginRequest adminLoginRequest);
     AddCandidateResponse addCandidate(AddCandidateRequest addCandidateRequest) throws MessagingException;
     AddNonCandidateResponse addNonCandidate(AddNonCandidateRequest addNonCandidateRequest) throws MessagingException;
-
     List<Candidate> displayResult();
-
 }

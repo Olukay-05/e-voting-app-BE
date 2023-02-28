@@ -2,6 +2,7 @@ package com.semicolonafrica.evoting.data.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
