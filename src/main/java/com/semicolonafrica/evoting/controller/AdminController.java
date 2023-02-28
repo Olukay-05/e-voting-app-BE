@@ -3,6 +3,7 @@ package com.semicolonafrica.evoting.controller;
 
 import com.semicolonafrica.evoting.dto.request.AddCandidateRequest;
 import com.semicolonafrica.evoting.dto.request.AddNonCandidateRequest;
+import com.semicolonafrica.evoting.dto.request.AdminLoginRequest;
 import com.semicolonafrica.evoting.dto.request.ResultRequest;
 import com.semicolonafrica.evoting.services.AdminService;
 import com.semicolonafrica.evoting.utils.ApiResponse;
@@ -21,6 +22,18 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    @PostMapping("admin-login")
+    public ResponseEntity<ApiResponse> addCandidate(@RequestBody AdminLoginRequest adminLoginRequest,
+                                                    HttpServletRequest httpServletRequest) throws MessagingException {
+        ApiResponse apiResponse = ApiResponse.builder()
+                .statusCode(HttpStatus.OK)
+                .data(adminService.adminLogin(adminLoginRequest))
+                .timeStamp(ZonedDateTime.now())
+                .path(httpServletRequest.getRequestURI())
+                .isSuccessful(true)
+                .build();
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    }
     @PostMapping("candidate-addition")
     public ResponseEntity<ApiResponse> addCandidate(@RequestBody AddCandidateRequest addCandidateRequest,
                                                     HttpServletRequest httpServletRequest) throws MessagingException {
@@ -48,15 +61,16 @@ public class AdminController {
     }
 
     @GetMapping("display-result")
-    public ResponseEntity<ApiResponse> result(@RequestBody ResultRequest resultRequest,
+    public ResponseEntity<ApiResponse> result(
                                               HttpServletRequest httpServletRequest){
         ApiResponse apiResponse= ApiResponse.builder()
                 .statusCode(HttpStatus.OK)
-                .data(adminService.displayResult(resultRequest))
+                .data(adminService.displayResult())
                 .timeStamp(ZonedDateTime.now())
                 .path(httpServletRequest.getRequestURI())
                 .isSuccessful(true)
                 .build();
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
 }
