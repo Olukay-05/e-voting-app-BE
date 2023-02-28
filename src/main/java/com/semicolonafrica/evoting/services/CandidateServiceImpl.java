@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -42,6 +43,10 @@ public class CandidateServiceImpl implements CandidateService{
         voteResponse.setMessage("Thank you! your vote has been successfully submitted");
         voteResponse.setStatus(HttpStatus.OK);
         return voteResponse;
+    }
+
+    public List<Candidate> findAllCandidates(){
+        return candidateRepo.findAll();
     }
 
     private static String hashToken(String token){
