@@ -13,13 +13,6 @@ public class Admin {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    private String name = "admin";
-    private String password = "admin";
-
-    @OneToMany(mappedBy="admin")
-    private List<Candidate> candidateList = new ArrayList<>();
-
-    @OneToMany(mappedBy="admin")
-    private List<NonCandidate> nonCandidateList = new ArrayList<>();
-
+    private String name;
+    private String password;
 }
