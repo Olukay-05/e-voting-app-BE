@@ -10,7 +10,4 @@ public class NonCandidate extends Voter{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-//    @JoinColumn(name="admin_id")
-    private Admin admin;
 }

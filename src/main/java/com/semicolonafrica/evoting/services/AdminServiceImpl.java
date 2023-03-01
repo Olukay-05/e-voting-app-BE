@@ -35,16 +35,26 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     private AdminRepo adminRepo;
     private final Admin admin = new Admin();
-
     @Override
     public AdminLoginResponse adminLogin(AdminLoginRequest adminLoginRequest) {
+        admin.setName("admin");
+        admin.setPassword(hashPassword("admin"));
+        adminRepo.save(admin);
         Admin foundAdmin = adminRepo.findByName(adminLoginRequest.getName());
         AdminLoginResponse response = new AdminLoginResponse();
-        if (adminLoginRequest.getPassword().equals(foundAdmin.getPassword())){
+        if (confirmPassword(adminLoginRequest.getPassword(), foundAdmin.getPassword())){
             response.setStatus(HttpStatus.OK);
             response.setMessage("Login successful");
         }else throw new IllegalStateException("Invalid password");
         return response;
+    }
+    private static String hashPassword(String userPassword){
+        String password = userPassword;
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private static boolean confirmPassword(String candidate, String password){
+        return BCrypt.checkpw(candidate, password);
     }
     @Override
     public AddCandidateResponse addCandidate(AddCandidateRequest addCandidateRequest) throws MessagingException {
@@ -55,9 +65,6 @@ public class AdminServiceImpl implements AdminService{
         candidate.setToken(token);
         candidate.setEmail(addCandidateRequest.getEmail());
         candidateService.addCandidate(candidate);
-
-        admin.getCandidateList().add(candidate);
-        adminRepo.save(admin);
 
         emailSenderService.send(addCandidateRequest.getEmail(), buildEmail(addCandidateRequest.getEmail(), token));
         AddCandidateResponse response = getAddCandidateResponse();
@@ -73,8 +80,6 @@ public class AdminServiceImpl implements AdminService{
         nonCandidate.setToken(token);
         nonCandidate.setEmail(addNonCandidateRequest.getEmail());
         nonCandidateService.addNonCandidate(nonCandidate);
-        admin.getNonCandidateList().add(nonCandidate);
-        adminRepo.save(admin);
 
         emailSenderService.send(addNonCandidateRequest.getEmail(), buildEmail(addNonCandidateRequest.getEmail(), token));
         AddNonCandidateResponse response = getAddNonCandidateResponse();
