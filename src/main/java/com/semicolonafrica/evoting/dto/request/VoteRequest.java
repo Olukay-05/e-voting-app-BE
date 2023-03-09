@@ -7,5 +7,4 @@ import lombok.Data;
 public class VoteRequest {
     private String email;
     private String token;
-    private Long candidateId;
 }

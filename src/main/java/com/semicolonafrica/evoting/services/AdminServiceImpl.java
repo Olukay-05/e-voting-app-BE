@@ -7,11 +7,9 @@ import com.semicolonafrica.evoting.data.repository.AdminRepo;
 import com.semicolonafrica.evoting.dto.request.AddCandidateRequest;
 import com.semicolonafrica.evoting.dto.request.AddNonCandidateRequest;
 import com.semicolonafrica.evoting.dto.request.AdminLoginRequest;
-import com.semicolonafrica.evoting.dto.request.ResultRequest;
 import com.semicolonafrica.evoting.dto.response.AddCandidateResponse;
 import com.semicolonafrica.evoting.dto.response.AddNonCandidateResponse;
 import com.semicolonafrica.evoting.dto.response.AdminLoginResponse;
-import com.semicolonafrica.evoting.dto.response.ResultResponse;
 import com.semicolonafrica.evoting.email.EmailSenderService;
 import com.semicolonafrica.evoting.exceptions.UserExistsException;
 import jakarta.mail.MessagingException;
@@ -34,15 +32,14 @@ public class AdminServiceImpl implements AdminService{
 
     @Autowired
     private AdminRepo adminRepo;
+
     private final Admin admin = new Admin();
     @Override
     public AdminLoginResponse adminLogin(AdminLoginRequest adminLoginRequest) {
         admin.setName("admin");
         admin.setPassword(hashPassword("admin"));
-        adminRepo.save(admin);
-        Admin foundAdmin = adminRepo.findByName(adminLoginRequest.getName());
         AdminLoginResponse response = new AdminLoginResponse();
-        if (confirmPassword(adminLoginRequest.getPassword(), foundAdmin.getPassword())){
+        if (adminLoginRequest.getName().equals("admin") && adminLoginRequest.getPassword().equals("admin")){
             response.setStatus(HttpStatus.OK);
             response.setMessage("Login successful");
         }else throw new IllegalStateException("Invalid password");
@@ -65,7 +62,6 @@ public class AdminServiceImpl implements AdminService{
         candidate.setToken(token);
         candidate.setEmail(addCandidateRequest.getEmail());
         candidateService.addCandidate(candidate);
-
         emailSenderService.send(addCandidateRequest.getEmail(), buildEmail(addCandidateRequest.getEmail(), token));
         AddCandidateResponse response = getAddCandidateResponse();
         return response;
@@ -80,7 +76,6 @@ public class AdminServiceImpl implements AdminService{
         nonCandidate.setToken(token);
         nonCandidate.setEmail(addNonCandidateRequest.getEmail());
         nonCandidateService.addNonCandidate(nonCandidate);
-
         emailSenderService.send(addNonCandidateRequest.getEmail(), buildEmail(addNonCandidateRequest.getEmail(), token));
         AddNonCandidateResponse response = getAddNonCandidateResponse();
         return response;

@@ -9,9 +9,9 @@ import java.util.List;
 public interface CandidateService extends VoterService{
     void addCandidate(Candidate candidate);
     boolean candidateExists(String email);
-    Candidate findCandidate(Long id);
+    Candidate findCandidate(String email);
 
     List<Candidate> findAllCandidates();
-
+    Candidate findCandidateById(Long id);
 
 }

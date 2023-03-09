@@ -9,6 +9,7 @@ import com.semicolonafrica.evoting.services.AdminService;
 import com.semicolonafrica.evoting.utils.ApiResponse;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("api/v1/admin/")
+@CrossOrigin(origins = "*")
 public class AdminController {
     @Autowired
     private AdminService adminService;

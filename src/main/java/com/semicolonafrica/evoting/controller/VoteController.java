@@ -1,5 +1,6 @@
 package com.semicolonafrica.evoting.controller;
 
+import com.semicolonafrica.evoting.dto.request.IncreaseCandidateVoteRequest;
 import com.semicolonafrica.evoting.dto.request.VoteRequest;
 import com.semicolonafrica.evoting.services.CandidateService;
 import com.semicolonafrica.evoting.services.NonCandidateService;
@@ -8,15 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 
 @RestController
-@RequestMapping("api/v1/voting/")
+@RequestMapping("api/v2/voting/")
+@CrossOrigin(origins="*")
 public class VoteController {
 
     @Autowired
@@ -26,7 +25,7 @@ public class VoteController {
 
 
     @PostMapping("nonCandidate")
-    public ResponseEntity<ApiResponse> nonCandidatesVote(@RequestBody VoteRequest voteRequest,
+    public ResponseEntity<ApiResponse> confirmNonCandidateToken(@RequestBody VoteRequest voteRequest,
                                             HttpServletRequest httpServletRequest){
         ApiResponse response = ApiResponse.builder()
                 .data(nonCandidateService.vote(voteRequest))
@@ -39,10 +38,22 @@ public class VoteController {
     }
 
     @PostMapping("candidate")
-    public ResponseEntity<ApiResponse> candidatesVote(@RequestBody VoteRequest voteRequest,
+    public ResponseEntity<ApiResponse> confirmCandidateToken(@RequestBody VoteRequest voteRequest,
                                             HttpServletRequest httpServletRequest){
         ApiResponse response = ApiResponse.builder()
                 .data(candidateService.vote(voteRequest))
+                .statusCode(HttpStatus.OK)
+                .timeStamp(ZonedDateTime.now())
+                .path(httpServletRequest.getRequestURI())
+                .isSuccessful(true)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("voting")
+    public ResponseEntity<ApiResponse> voting(@RequestBody IncreaseCandidateVoteRequest increaseCandidateVoteRequest,
+                                                             HttpServletRequest httpServletRequest){
+        ApiResponse response = ApiResponse.builder()
+                .data(nonCandidateService.addVote(increaseCandidateVoteRequest))
                 .statusCode(HttpStatus.OK)
                 .timeStamp(ZonedDateTime.now())
                 .path(httpServletRequest.getRequestURI())
